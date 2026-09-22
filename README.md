@@ -51,3 +51,38 @@ All 11 experiments were tracked with MLflow.
 ![Parallel coordinates: imbalance strategy, model, and PR-AUC](docs/mlflow_parallel_coords.png)
 
 ![XGBoost best run detail](docs/mlflow_xgboost_detail.png)
+
+## Tuning, Threshold, and Explainability
+
+**Tuning (Optuna, 50 trials, 5-fold CV):**
+Best CV PR-AUC: 0.859 (vs 0.847 for the manually-tuned model).
+Best hyperparameters: `n_estimators=401`, `max_depth=5`, `learning_rate=0.092`, `subsample=0.76`, `colsample_bytree=0.91`, `min_child_weight=7` `gamma=1.52`, `scale_pos_weight=169.9`. Most influential hyperparameters: `colsample_bytree`, `scale_pos_weight`, `subsample`.
+
+**Threshold (cost-based selection):**
+Assumed costs: a missed fraud costs $100, a false alarm costs $5. Sweeping
+thresholds on the validation set found the cost-minimizing threshold at **0.05**
+(well below the default 0.5, since missed frauds are far more costly than false alarms). This reduced estimated cost from $1,615 (default threshold) to $1,190, a **26.3% savings**.
+
+**Explainability (SHAP):**
+The model relies most heavily on V4, followed by V14, V12, V10, and V3 — largely consistent with earlier correlation analysis, though SHAP surfaced V4 as more central than simple correlation suggested, since it captures feature interactions. 
+A reviewed "missed fraud" case had a predicted probability of just 0.001 — every major feature looked statistically like a normal transaction, showing a genuine limit of what these anonymized features alone can catch.
+
+**Robustness (time-based split):**
+Training on the first 80% of transactions chronologically and testing on the last 20% (rather than a random split) checks for concept drift within the 2-day window. PR-AUC dropped from **0.85** (random split) to **0.79** (time-based split), indicating the model does not generalize perfectly across time even within this short window. In production, this would call for regular retraining and drift monitoring — though 2 days is too short a window to draw strong conclusions about long-term drift patterns; a longer historical dataset would be needed to properly characterize this.
+
+## Final Test Results
+
+Evaluated once on the held-out test set, at the cost-optimized threshold (0.05), never used for model selection or tuning:
+
+| Metric | Value |
+|---|---|
+| PR-AUC | 0.822 |
+| Precision | 0.619 |
+| Recall | 0.845 |
+| Frauds caught | 60 / 71 |
+| False alarms | 37 |
+| Estimated cost savings vs default threshold | 26.3%* |
+
+*Cost savings measured on the validation set during threshold selection; the same threshold was then applied once to the test set above.
+
+**Interpretation:** at this low threshold, the model catches 84.5% of frauds at the cost of flagging 37 legitimate transactions per ~71 frauds. This reflects a deliberate business trade-off (missed fraud costs 20x more than a false alarm in our cost model) — a bank could review these 37 flagged transactions manually at a much lower cost than the frauds they'd otherwise miss.
