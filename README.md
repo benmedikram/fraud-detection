@@ -31,3 +31,23 @@ Card fraud costs banks and customers billions every year, and fraudulent transac
 2. Install the requirements: python -m pip install -r requirements.txt
 3. Prepare the data: python -m src.data
 4. Run the tests: python -m pytest
+
+## Model Comparaison (5-fold CV on the training set)
+
+| Model | Imbalance strategy | PR-AUC (mean ± std) | Recall @0.5 | Precision @0.5 |
+|---|---|---|---|---|
+| XGBoost | scale_pos_weight sqrt | 0.855 ± 0.028 | 0.825 | 0.918 |
+| XGBoost | none | 0.855 ± 0.027 | 0.801 | 0.944 |
+| XGBoost | scale_pos_weight full | 0.855 ± 0.029 | 0.828 | 0.896 |
+| RandomForest | SMOTE | 0.846 ± 0.027 | 0.831 | 0.863 |
+| RandomForest | none | 0.843 ± 0.024 | 0.764 | 0.935 |
+
+Best model: **XGBoost**, PR-AUC ~0.855, far above the 0.0017 "never fraud" baseline.
+Accuracy isn't used as a metric, since a model that never flags fraud already scores 99.8%.
+All 11 experiments were tracked with MLflow.
+
+![MLflow runs table, sorted by PR-AUC](docs/mlflow_runs_table.png)
+
+![Parallel coordinates: imbalance strategy, model, and PR-AUC](docs/mlflow_parallel_coords.png)
+
+![XGBoost best run detail](docs/mlflow_xgboost_detail.png)
