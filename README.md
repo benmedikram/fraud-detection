@@ -12,12 +12,12 @@ Card fraud costs banks and customers billions every year, and fraudulent transac
 
 ## Progress
 
-- [x] Week 1: data cleaning, exploration, splits, baseline
-- [ ] Week 2: models and imbalance handling
-- [ ] Week 3: tuning, threshold, explainability
-- [ ] Week 4: API, Docker, tests, CI
+- [x] Step 1: data cleaning, exploration, splits, baseline
+- [x] Step 2: models and imbalance handling
+- [ ] Step 3: tuning, threshold, explainability
+- [ ] Step 4: API, Docker, tests, CI
 
-## Week 1 findings
+## Data findings
 
 - Removed 1081 duplicate rows, leaving 283726 transactions (473 frauds).
 - Stratified 70/15/15 split: train 198608, validation 42559, test 42559 rows. The fraud rate is about 0.17% in each.
