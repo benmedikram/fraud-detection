@@ -14,8 +14,8 @@ Card fraud costs banks and customers billions every year, and fraudulent transac
 
 - [x] Step 1: data cleaning, exploration, splits, baseline
 - [x] Step 2: models and imbalance handling
-- [ ] Step 3: tuning, threshold, explainability
-- [ ] Step 4: API, Docker, tests, CI
+- [x] Step 3: tuning, threshold, explainability
+- [x] Step 4: API, Docker, tests, CI
 
 ## Data findings
 
