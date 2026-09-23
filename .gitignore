@@ -1,5 +1,8 @@
 .venv/
-data/
+data/*
+!data/processed/
+data/processed/*
+!data/processed/api_samples.csv
 __pycache__/
 .ipynb_checkpoints/
 mlruns/
