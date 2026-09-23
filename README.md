@@ -86,3 +86,43 @@ Evaluated once on the held-out test set, at the cost-optimized threshold (0.05),
 *Cost savings measured on the validation set during threshold selection; the same threshold was then applied once to the test set above.
 
 **Interpretation:** at this low threshold, the model catches 84.5% of frauds at the cost of flagging 37 legitimate transactions per ~71 frauds. This reflects a deliberate business trade-off (missed fraud costs 20x more than a false alarm in our cost model) — a bank could review these 37 flagged transactions manually at a much lower cost than the frauds they'd otherwise miss.
+
+## Deployment
+
+**Run everything with Docker Compose:**
+```bash
+docker compose up --build
+```
+- API: http://localhost:8000/docs
+- Demo: http://localhost:8501
+
+**Run just the API:**
+```bash
+docker build -t fraud-api .
+docker run -p 8000:8000 fraud-api
+```
+
+**API example:**
+```bash
+curl -X POST http://localhost:8000/predict \
+  -H "Content-Type: application/json" \
+  -d '{"features": [0, -1.36, -0.07, 2.54, ...]}'
+```
+
+## Tech Stack
+
+Python · pandas · scikit-learn · XGBoost · Optuna · SHAP · MLflow · FastAPI ·
+Streamlit · Docker · pytest · GitHub Actions
+
+## Project Structure
+
+```
+fraud-detection/
+├── src/            # data pipeline, model wrapper, FastAPI app
+├── app/            # Streamlit demo
+├── notebooks/      # EDA, modeling, tuning (with full analysis)
+├── models/         # trained model, threshold, metadata
+├── tests/          # pytest suite
+├── docs/           # screenshots for this README
+└── docker-compose.yml
+```

@@ -1,0 +1,15 @@
+.venv/
+notebooks/
+data/*
+!data/processed/
+data/processed/*
+!data/processed/api_samples.csv
+reports/
+docs/
+tests/
+.git/
+.pytest_cache/
+__pycache__/
+mlflow.db
+optuna_study.db
+*.ipynb
